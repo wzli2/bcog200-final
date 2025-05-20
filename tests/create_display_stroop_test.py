@@ -1,3 +1,4 @@
+# Creates a sequence of colored words and displays them
 import random
 import tkinter as tk
 
@@ -44,7 +45,9 @@ def after_display(duration):
 
 
 def main():
+	# The number of words that will appear
 	iteration = 3
+	
 	create_and_display_stroop_sequence(iteration)
 
 if __name__ == '__main__':
