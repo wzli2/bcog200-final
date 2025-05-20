@@ -1,8 +1,12 @@
 import random
+import tkinter as tk
 
 class Exp:
 	def __init__(self, gui):
 		self.gui = gui
+		self.stroop_labels = []
+
+		self.run_experiment()
 
 	def choose_task(self):
 		#presents task options, waits for button press and returns task type
@@ -30,8 +34,9 @@ class Exp:
 		self.gui.instructions_text_label.pack_propagate(False) # prevent the label from changing size to fit the text
 
 		self.gui.next_button.pack(pady=30)
-
 		self.gui.root.update()
+
+		self.gui.root.wait_window(self.gui.instructions_frame)
 
 	def create_digit_sequence(self, iteration):
 		#generates sequence for digit-span tasks
@@ -42,25 +47,71 @@ class Exp:
 
 		return int(sequence)
 
-	def create_stroop_sequence(self, iteration):
-		pass
+	def create_and_display_stroop_sequence(self, iteration):
+		colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "black"]
+		color_list = random.choices(colors, k=iteration)
+		self.sequence = " ".join(color_list)
+
+		#I asked chatgpt for help with formatting because I was only using pack(), and counting columns using grid() is a nice solution
+		row = 0
+		column = 0
+		row_limit = 6
+		for color in color_list:
+			word = random.choice(colors)
+			stroop_label = tk.Label(self.gui.root, anchor='center', text=word, bg="white", fg=color, font=("helvetica", 40))
+			stroop_label.grid(row=row, column=column, padx=40, pady=40)
+			self.stroop_labels.append(stroop_label)
+
+			column +=1
+			if column >= row_limit:
+				column = 0
+				row += 1
+		
+		self.gui.root.update()
+
+		duration = iteration * 2500
+
+		self.gui.root.after(duration, self.request_answer)
+
 
 	def show_sequence(self, iteration, sequence):#, key_list, record_data):
 
-		self.gui.stimulus_label.configure(text=sequence) #need to configure text if digits, image if stroop
+		self.gui.stimulus_label.configure(text=sequence)
 		self.gui.stimulus_label.pack()
 		self.gui.stimulus_label.pack_propagate(False)
 		self.gui.root.update()
 
-		duration = iteration * 4000
-		self.gui.root.after(duration, self.gui.root.quit)
-		self.gui.root.mainloop()
-		self.gui.stimulus_label.pack_forget()
+		duration = iteration * 1500
+
+		self.gui.root.after(duration, self.request_answer)
 
 	def request_answer(self):
+		if self.gui.selected_task in [0,1]:
+			self.gui.stimulus_label.pack_forget()
+		else:
+			for label in self.stroop_labels:
+				label.destroy()
+			self.stroop_labels.clear()
+
+		#from asking chatgpt how to get rid of tkinter entry text
+		self.gui.answer_entry.delete(0, tk.END)
 		self.gui.answer_entry.pack(pady=10)
+		#From asking chatgpt "tkinter how to make a frame not overlap a widget":
+		self.gui.answer_entry.focus_set()
+
 		self.gui.submit_button.pack(pady=10)
 		self.gui.root.update()
+
+		self.answer_loop()
+
+	def answer_loop(self):
+		if self.gui.answer is not None:
+			self.correct = self.check_answer(self.sequence, self.gui.answer)
+			self.iteration += 1
+			self.gui.answer = None
+			self.experiment_loop()
+		else:
+			self.gui.root.after(100, self.answer_loop)
 
 	def check_answer(self, correct_sequence, given_answer):
 		if self.gui.selected_task == 0:
@@ -68,10 +119,10 @@ class Exp:
 
 		elif self.gui.selected_task == 1:
 			correct_sequence = str(correct_sequence)[::-1]
-			return correct_sequence == int(given_answer)
+			return correct_sequence == str(given_answer)
 
 		elif self.gui.selected_task == 2:
-			return str(correct_sequence) == given_answer
+			return correct_sequence == given_answer
 
 		elif self.gui.selected_task == 3:
 			correct_sequence = correct_sequence.split()[::-1]
@@ -83,30 +134,25 @@ class Exp:
 		#runs choose_task, show_instructions, and show_sequence from Gui
 		self.choose_task()
 		self.show_instructions()
-		correct = True
-		iteration = 1
-		while correct:
-			if self.gui.selected_task in [0,1]:
-				sequence = self.create_digit_sequence(iteration)
-			else:
-				sequence = self.create_stroop_sequence(iteration)
-			self.show_sequence(iteration, sequence)#, key_list, record_data):
-			self.request_answer()
-			correct = self.check_answer(sequence, self.gui.answer)
-			iteration += 1
+		self.correct = True
+		if self.gui.selected_task in [0,1]:
+			self.iteration = 3
+		else:
+			self.iteration = 2
+		self.experiment_loop()
 
-		self.save_data()
-		self.make_plots()
-		self.save_plots()
+	def experiment_loop(self):
+		#if incorrect answer, exit experiment
+		if not self.correct:
+
+			self.gui.root.destroy()
 
 
+		#0 and 1 are digit-test conditions, 2 and 3 are stroop
+		if self.gui.selected_task in [0,1]:
+			self.sequence = self.create_digit_sequence(self.iteration)
+			self.show_sequence(self.iteration, self.sequence)
 
-	def save_data(self):
-		pass
-
-	def make_plots(self):
-		pass
-
-	def save_plots(self):
-		pass
+		else:
+			self.create_and_display_stroop_sequence(self.iteration)
 
