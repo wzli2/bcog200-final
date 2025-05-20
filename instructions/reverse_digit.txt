@@ -1,0 +1,1 @@
+This is the REVERSE digit-span test. You will first be presented with a three digit number. After an amount of time, a text box will appear where you will type in the number BACKWARDS, in reverse order. If you answer correctly, another number with one more digit will appear. Answer again in reverse order and repeat this process until you answer incorrectly. Good luck!

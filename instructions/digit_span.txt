@@ -1,0 +1,1 @@
+This is the digit-span test. You will first be presented with a three digit number. After an amount of time, a text box will appear where you will type in the number to the best of your ability. If you answer correctly, another number with one more digit will appear. You will type in the number again and repeat this process until answer incorrectly. Good luck!
