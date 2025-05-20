@@ -78,11 +78,3 @@ class Gui:
 		self.answer = self.answer_entry.get()
 		self.answer_entry.pack_forget()
 		self.submit_button.pack_forget()
-
-	def check_for_valid_number(self, key_input):
-		#makes sure the key input is an integer and returns True/False
-		pass
-
-	def check_for_valid_word(self, word_input):
-		#makes sure the key input is a valid word and returns True/False
-		pass
