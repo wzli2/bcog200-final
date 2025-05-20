@@ -16,9 +16,10 @@ To begin, choose the top-left "Digit-span" task. You will see a sequence of numb
 
 # Code Strucuture
 experiment_main/
-  This program is built from an interface.py (GUI) file, an experiment.py file, and a run_exp.py file. The first two code for classes that run_exp.py use to run the experiment. interface.py is primarily responsible for the GUI and most of the frames and widgets. experiment.py is responsible for everything else in addition to the Stroop-specific widgets.
+* This program is built from an interface.py (GUI) file, an experiment.py file, and a run_exp.py file. The first two code for classes that run_exp.py use to run the experiment. interface.py is primarily responsible for the GUI and most of the frames and widgets. experiment.py is responsible for everything else in addition to the Stroop-specific widgets.
+
 instructions/
-  This file contains the .txt files that contain the intruction texts for each task, and is accessed from experiment.py
+* This file contains the .txt files that contain the intruction texts for each task, and is accessed from experiment.py
 
 # Controls
-\* Buttons must be pressed with the mouse to progress in the test, and the test itself takes keyboard input.
+Buttons must be pressed with the mouse to progress in the test, and the test itself takes keyboard input.
